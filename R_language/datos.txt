@@ -1,0 +1,6 @@
+Nombre|Edad|Profesión
+Marta|33|Enfermera
+Ricardo|29|Analista
+Isabel|42|Chef
+Fernando|36|Músico
+Gabriela|24|Estilista

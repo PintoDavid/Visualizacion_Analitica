@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Visualización de fauna silvestre rescatada</title>
+	</head>
+	<style>
+		*, *::before, *::after {
+			box-sizing: border-box;
+		  }
+		  
+		  * {
+			margin: 0;
+			padding: 0;
+			outline: 0;
+		  }
+		  
+		  html, body {
+			height: 100%;
+		  }
+		  
+		  body {
+			line-height: 1.5;
+			-webkit-font-smoothing: antialiased;
+		  }
+		  
+		  img, picture, video, canvas, svg {
+			display: block;
+			max-width: 100%;
+		  }
+		  
+		  input, button, textarea, select {
+			font: inherit;
+		  }
+		  
+		  p, h1, h2, h3, h4, h5, h6 {
+			overflow-wrap: break-word;
+		  }
+		  
+		  #root, #__next {
+			isolation: isolate;
+		  }
+	</style>
+	<style>
+		.contenedorDatos{
+			display: flex;
+			flex-direction: column;
+			background-color: #F9F6EE;
+			align-items: flex-start;
+			justify-content: center;
+			width: 100dvw;
+			height: 100dvh;
+			gap: 6px;
+			padding: 5% 5%;
+		}
+
+		.contenedorDatos > h1{
+			font-size: 36px;
+			line-height: 42px;
+			font-family: "Inter", sans-serif;
+			font-weight: 700;
+		}
+
+		.contenedorDatos form {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 18px;
+			line-height: 22px;
+			display: flex;
+			gap: 16px;
+		}
+	
+		label {
+			display: block;
+		}
+	</style>
+	<style>
+		.chart-legend-controlador {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10%;
+			margin-top: 22px;
+		}
+	
+		.chart-legend-contenedor {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+	
+		.chart-legend-contenido {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+		}
+	
+		.chart-legend-contenido > div {
+			width: 20px;
+			height: 20px;
+		}
+	
+		.chart-legend-contenido > span {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			color: black;
+			font-size: 18px;
+			line-height: 24px;
+			text-transform: capitalize;
+		}
+	</style>
+	<body>
+		<section class="contenedorDatos">
+			<h1>
+				Cantidad de incautaciones de fauna silvestre, periodo 2008-2021
+			</h1>
+			<form>
+				<label>
+					<input type="radio" name="mode" value="grouped" />
+					Grouped
+				</label>
+				<label>
+					<input type="radio" name="mode" value="stacked" checked />
+					Stacked
+				</label>
+			</form>
+			<article class="chart-legend-controlador">
+				<div class="chart-legend-contenedor">
+					<div class="chart-legend-contenido">
+						<div style="background-color: #c6dbef;"></div>
+						<span>Mamiferos</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #9ecae1;"></div>
+						<span>Aves</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #6baed6;"></div>
+						<span>Reptiles</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #4292c6;"></div>
+						<span>Aracnidos</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #2171b5;"></div>
+						<span>Artropodos</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #08519c;"></div>
+						<span>Anfibios</span>
+					</div>
+					<div class="chart-legend-contenido">
+						<div style="background-color: #08306b;"></div>
+						<span>Moluscos</span>
+					</div>
+	
+				</div>
+			</article>
+			<svg width="960" height="500"></svg>
+			<script src="https://d3js.org/d3.v4.min.js"></script>
+			<script src="myscripts.js"></script>
+		</section>
+	</body>
+</html>

@@ -1,0 +1,3 @@
+This is the second example file.
+It is similar to the first one but with different data.
+It contains different information.

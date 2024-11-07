@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Barras Dinámico</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Gráfico de Barras con Desglose</h1>
+    <div id="chart"></div>
+
+    <script>
+        const margin = {top: 40, right: 20, bottom: 30, left: 100};
+        const width = 960 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        const x = d3.scaleLinear().range([0, width]);
+        const y = d3.scaleBand().range([height, 0]).padding(0.2); // Ajuste de padding
+
+        const xAxis = d3.axisTop(x);
+        const yAxis = d3.axisLeft(y);
+
+        const hierarchyLevels = ["año", "Departamento", "Municipio", "Lugar Decomiso", "Situacion", "Autoridad que incauto", "nom tipo especie", "Nombre comun", "Nombre cientifico", "Cantidad"];
+        let currentLevel = 0;
+        let currentData = [];
+        const barHeight = 20; // Tamaño fijo para todas las barras
+
+        d3.csv("Datos_animales.csv").then(function(data) {
+            data.forEach(d => d.Cantidad = +d.Cantidad);
+
+            // Inicialmente, mostrar solo la barra de "año"
+            const years = Array.from(new Set(data.map(d => d["año"]))).map(year => ({ año: year, Cantidad: data.filter(d => d["año"] === year).length }));
+            currentData = data;
+
+            renderBars(years, "año");
+
+            svg.append("g")
+                .attr("class", "axis axis-x")
+                .attr("transform", "translate(0,0)")
+                .call(xAxis)
+                .style("font-size", "14px")
+                .style("stroke", "#000");
+
+            svg.append("g")
+                .attr("class", "axis axis-y")
+                .attr("transform", "translate(0,0)")
+                .call(yAxis)
+                .style("font-size", "14px")
+                .style("stroke", "#000");
+
+            d3.select("body").on("click", function() {
+                if (currentLevel > 0) {
+                    currentLevel--;
+                    updateLevel();
+                }
+            });
+
+        }).catch(function(error) {
+            console.error("Error al cargar el archivo CSV:", error);
+        });
+
+        function renderBars(data, level) {
+            // Ordenar las barras en orden descendente
+            data.sort((b, a) => d3.descending(a.Cantidad, b.Cantidad));
+
+            x.domain([0, d3.max(data, d => d.Cantidad)]);
+            y.domain(data.map(d => d[level]));
+
+            const bars = svg.selectAll(".bar")
+                .data(data, d => d[level]);
+
+            bars.enter().append("rect")
+                .attr("class", "bar celeste")
+                .attr("y", d => y(d[level]))
+                .attr("x", 0)
+                .attr("height", barHeight) // Tamaño fijo para la altura de las barras
+                .attr("width", d => x(d.Cantidad))
+                .style("fill", "steelblue")
+                .style("cursor", "pointer")
+                .on("click", function(event, d) {
+                    event.stopPropagation();
+                    if (currentLevel < hierarchyLevels.length - 1) {
+                        currentLevel++;
+                        updateLevel(d[level]);
+                    }
+                });
+
+            bars.exit().remove();
+
+            bars.transition()
+                .attr("y", d => y(d[level]))
+                .attr("x", 0)
+                .attr("height", barHeight) // Tamaño fijo para la altura de las barras
+                .attr("width", d => x(d.Cantidad));
+
+            updateAxes(data, level);
+        }
+
+        function updateAxes(data, level) {
+            x.domain([0, d3.max(data, d => d.Cantidad)]);
+            y.domain(data.map(d => d[level]));
+
+            // Ajustar el dominio del eje Y en función del número de barras
+            const yDomain = data.map(d => d[level]);
+            svg.select(".axis-y").transition().call(yAxis.tickFormat(d => d).ticks(yDomain.length));
+            svg.select(".axis-x").transition().call(xAxis);
+        }
+
+        function updateLevel(selectedValue) {
+            const level = hierarchyLevels[currentLevel];
+            let filteredData;
+
+            if (selectedValue) {
+                filteredData = currentData.filter(d => d[hierarchyLevels[currentLevel - 1]] === selectedValue);
+            } else {
+                filteredData = currentData;
+            }
+
+            const uniqueValues = Array.from(new Set(filteredData.map(d => d[level]))).map(value => {
+                return {
+                    [level]: value,
+                    Cantidad: d3.sum(filteredData.filter(d => d[level] === value), d => d.Cantidad)
+                };
+            });
+
+            renderBars(uniqueValues, level);
+        }
+    </script>
+</body>
+</html>
