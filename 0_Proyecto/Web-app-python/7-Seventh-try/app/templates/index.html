@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Procesar Archivos JSON y BIN</h1>
+
+    <!-- Formulario para seleccionar carpeta -->
+    <form id="folder-form" method="post" enctype="multipart/form-data" action="/upload-folder">
+        <label for="folderInput">Selecciona una carpeta:</label>
+        <input type="file" id="folderInput" name="files" webkitdirectory multiple required>
+        <button type="submit">Subir y Procesar</button>
+    </form>
+
+    <!-- Indicador de progreso -->
+    <div id="progress-container">
+        <p>Progreso: <span id="progress-text">0%</span></p>
+        <progress id="progress-bar" value="0" max="100"></progress>
+    </div>
+
+    <script src="/static/progress.js"></script>
+</body>
+</html>

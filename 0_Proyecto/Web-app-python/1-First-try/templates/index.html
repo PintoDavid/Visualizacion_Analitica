@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Data Visualization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Data Visualization with JSON and BIN Files</h2>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <label>Select Folder with JSON/BIN Files:</label>
+                <input type="file" webkitdirectory directory multiple id="folderInput" class="form-control">
+            </div>
+            <div class="col-md-8 text-right">
+                <button id="loadDataBtn" class="btn btn-primary mt-4">Load and Process Data</button>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <label>Choose File Pair:</label>
+                <input type="range" id="fileSlider" min="0" max="1" value="0" class="form-control">
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div id="visualization3D"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Datos</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Visualización de Datos Procesados</h1>
+    <div id="chart"></div>
+
+    <script>
+        // Obtener los datos procesados desde el servidor
+        const data = {{ data|tojson }};
+
+        // Preparar gráficos con D3.js
+        const chartDiv = d3.select("#chart");
+        
+        // Crear un gráfico básico de dispersión
+        Object.keys(data).forEach(file => {
+            const dataset = data[file].processed_data;  // Usar los datos procesados del archivo
+
+            chartDiv.append('h3').text(`Gráfica para: ${file}`);
+            
+            const svg = chartDiv.append("svg")
+                .attr("width", 500)
+                .attr("height", 300);
+
+            const xScale = d3.scaleLinear()
+                .domain([d3.min(dataset, d => d.x), d3.max(dataset, d => d.x)])
+                .range([50, 450]);
+
+            const yScale = d3.scaleLinear()
+                .domain([d3.min(dataset, d => d.y), d3.max(dataset, d => d.y)])
+                .range([250, 50]);
+
+            svg.selectAll("circle")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 5)
+                .style("fill", "steelblue");
+            
+            svg.append("g")
+                .attr("transform", "translate(0, 250)")
+                .call(d3.axisBottom(xScale));
+            
+            svg.append("g")
+                .attr("transform", "translate(50, 0)")
+                .call(d3.axisLeft(yScale));
+        });
+    </script>
+</body>
+</html>

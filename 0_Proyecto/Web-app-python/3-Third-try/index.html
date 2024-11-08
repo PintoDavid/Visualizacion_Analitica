@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-means Clustering Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Importa una librería de clustering para JavaScript -->
+    <script src="https://unpkg.com/ml-kmeans@4.0.0"></script>
+</head>
+<body>
+    <h1>Visualización de Clustering K-means</h1>
+
+    <input type="file" id="fileInput" multiple accept=".json,.bin">
+    <button onclick="procesarArchivos()">Procesar Archivos</button>
+
+    <div id="controls">
+        <label for="kSlider">Número de Clusters (k):</label>
+        <input type="range" id="kSlider" min="2" max="10" value="3" step="1" oninput="actualizarGraficas()">
+    </div>
+
+    <div id="chart"></div>
+    <div id="silhouette"></div>
+
+    <script>
+        let data = [];
+        let kMeansResult;
+
+        // Leer los archivos seleccionados
+        function procesarArchivos() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+
+            // Filtrar archivos .json y .bin y emparejarlos
+            let jsonFiles = Array.from(files).filter(file => file.name.endsWith('.json'));
+            let binFiles = Array.from(files).filter(file => file.name.endsWith('.bin'));
+
+            if (jsonFiles.length !== binFiles.length) {
+                alert("El número de archivos JSON y BIN no coincide.");
+                return;
+            }
+
+            jsonFiles.forEach((jsonFile, index) => {
+                // Leer el archivo JSON
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const jsonData = JSON.parse(reader.result);
+                    data.push(...jsonData); // Almacenar datos del JSON
+
+                    // Leer el archivo BIN correspondiente
+                    const binReader = new FileReader();
+                    binReader.onload = () => {
+                        // Procesa el archivo binario (modificar según los datos específicos de tu archivo binario)
+                        const binData = new Uint8Array(binReader.result);
+                        data = data.map((d, i) => ({ ...d, bin: binData[i] || 0 })); // Asociar con datos JSON
+
+                        // Al tener ambos archivos, se pueden graficar
+                        actualizarGraficas();
+                    };
+                    binReader.readAsArrayBuffer(binFiles[index]);
+                };
+                reader.readAsText(jsonFile);
+            });
+        }
+
+        function actualizarGraficas() {
+            const k = parseInt(document.getElementById("kSlider").value);
+            if (data.length === 0) return;
+
+            // Configura los datos en formato adecuado para K-means
+            const dataset = data.map(d => [d.x, d.y]); // Cambiar a los campos que necesites
+
+            // Ejecuta K-means
+            kMeansResult = mlKMeans(dataset, k, { initialization: 'kmeans++', maxIterations: 300 });
+            graficarKMeans();
+            graficarCoeficientesSilueta();
+        }
+
+        // Graficar resultados de K-means con D3.js
+        function graficarKMeans() {
+            const svg = d3.select("#chart").html('').append("svg").attr("width", 600).attr("height", 400);
+
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
+            svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => d.x * 10) // Cambiar para escalar a tu gráfico
+                .attr("cy", d => d.y * 10) // Cambiar para escalar a tu gráfico
+                .attr("r", 5)
+                .attr("fill", (d, i) => color(kMeansResult.clusters[i]));
+
+            // Dibujar centroides
+            svg.selectAll("centroid")
+                .data(kMeansResult.centroids)
+                .enter()
+                .append("circle")
+                .attr("cx", d => d.centroid[0] * 10)
+                .attr("cy", d => d.centroid[1] * 10)
+                .attr("r", 10)
+                .attr("fill", "black")
+                .attr("stroke", "red");
+        }
+
+        // Graficar Coeficiente de Silueta
+        function graficarCoeficientesSilueta() {
+            // Calcular coeficiente de silueta y graficar
+            const silhouetteScores = []; // Aquí puedes calcular los coeficientes de silueta
+
+            const svg = d3.select("#silhouette").html('').append("svg").attr("width", 600).attr("height", 200);
+
+            svg.selectAll("rect")
+                .data(silhouetteScores)
+                .enter()
+                .append("rect")
+                .attr("x", (d, i) => i * 20)
+                .attr("y", d => 100 - d * 100) // Escalar el coeficiente a la gráfica
+                .attr("width", 15)
+                .attr("height", d => d * 100)
+                .attr("fill", "blue");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering K-means</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Selecciona un Archivo y Configura K-means</h1>
+
+        <form action="/upload" method="post">
+            <div class="form-group">
+                <label for="archivo_index">Selecciona un archivo:</label>
+                <input type="range" class="form-control-range" id="archivo_index" name="archivo_index" min="0" max="{{ archivos|length - 1 }}" value="0" step="1">
+                <span id="archivo_name"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Cargar Archivo</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("archivo_index").addEventListener("input", function() {
+            var archivos = {{ archivos|tojson }};
+            var archivoIndex = this.value;
+            document.getElementById("archivo_name").innerText = archivos[archivoIndex].split('/').pop();
+        });
+    </script>
+</body>
+</html>

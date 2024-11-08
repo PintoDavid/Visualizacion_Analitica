@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar K-means</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Configuración de Clustering</h1>
+        <p><strong>Archivo seleccionado:</strong> {{ archivo }} (Fecha: {{ fecha }})</p>
+
+        <form action="/process" method="post">
+            <input type="hidden" name="archivo_index" value="{{ archivo_index }}">
+            
+            <div class="form-group">
+                <label for="eje_x_tipo">Tipo de Archivo para Eje X:</label>
+                <select class="form-control" name="eje_x_tipo">
+                    <option value="bin">BIN</option>
+                    <option value="json">JSON</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="eje_y_tipo">Tipo de Archivo para Eje Y:</label>
+                <select class="form-control" name="eje_y_tipo">
+                    <option value="bin">BIN</option>
+                    <option value="json">JSON</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="n_clusters">Número de Clusters:</label>
+                <input type="number" class="form-control" name="n_clusters" min="2" max="10" value="3">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generar Gráfico</button>
+        </form>
+    </div>
+</body>
+</html>

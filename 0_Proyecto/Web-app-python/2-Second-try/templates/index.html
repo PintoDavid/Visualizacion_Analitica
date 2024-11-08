@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clustering K-means</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Visualización de Clustering K-means</h1>
+
+    <input type="file" id="jsonFile" accept=".json">
+    <input type="file" id="binFile" accept=".bin">
+    <button onclick="enviarArchivos()">Enviar Archivos</button>
+
+    <div id="chart"></div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

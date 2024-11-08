@@ -1,0 +1,57 @@
+{
+    "hdr": {
+        "sonar_id": 0,
+        "ping_num": 1026,
+        "multi_ping": 0,
+        "xmit_freq": 396000,
+        "sample_rate": 34482.758,
+        "rcvr_bandwidth": 0,
+        "pulse_width": 0.0005,
+        "pulse_type": 0,
+        "envelope_type": 0,
+        "envelope_param": 0,
+        "pulse_extra": 0,
+        "max_ping_rate": 2,
+        "ping_period": 0.4999838,
+        "range_sel": 75,
+        "power_sel": 220,
+        "gain_sel": 53,
+        "control": {
+            "auto_bd_filter_method": 0,
+            "auto_gain_method": 0,
+            "auto_range_method": 0,
+            "bd_depth": false,
+            "bd_range": false
+        },
+        "prj": {
+            "id": 1,
+            "vert_angle": 0,
+            "horiz_angle": 0,
+            "vert_width": 0.0174533,
+            "horiz_width": 2.0943952,
+            "focal_point": 10000000,
+            "window_type": 0,
+            "window_param": 0
+        },
+        "transmit": {
+            "pitch_stabilization": 0,
+            "yaw_stabilization": 0
+        },
+        "hydrophone_id": 0,
+        "recv": {
+            "window_type": 0,
+            "window_param": 0,
+            "flags": 1,
+            "beam_width": 0.008
+        },
+        "bd": {
+            "min_range": 1,
+            "max_range": 5,
+            "min_depth": 1,
+            "max_depth": 5
+        },
+        "absorption": 0,
+        "sound_speed": 1468,
+        "spreading_loss": 0
+    }
+}

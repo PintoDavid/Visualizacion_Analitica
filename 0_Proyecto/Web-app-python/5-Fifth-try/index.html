@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering con K-means</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse/papaparse.min.js"></script> <!-- Para leer CSV -->
+    <script src="https://cdn.jsdelivr.net/npm/ml5"></script> <!-- Para Machine Learning en JS -->
+    <script src="https://d3js.org/d3.v7.min.js"></script> <!-- Para graficar -->
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">K-means Clustering en JavaScript</h1>
+
+        <!-- Selección de archivos -->
+        <input type="file" id="file-input" class="form-control mb-3" multiple>
+        
+        <!-- Contenedor para el gráfico -->
+        <div id="chart-container" class="mt-3"></div>
+
+        <!-- Slider para elegir número de clusters -->
+        <label for="clusters">Número de Clusters (k): </label>
+        <input type="range" id="clusters" min="2" max="10" value="3" class="form-control mb-3">
+        <span id="clusters-value">3</span>
+
+        <button id="process-btn" class="btn btn-primary mt-3">Procesar Datos</button>
+    </div>
+
+    <script>
+        // Leer el archivo CSV, JSON o BIN
+        document.getElementById('file-input').addEventListener('change', handleFileSelect);
+        let data = [];
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileContent = e.target.result;
+                    if (fileExtension === 'csv') {
+                        parseCSV(fileContent);
+                    } else if (fileExtension === 'json') {
+                        parseJSON(fileContent);
+                    } else if (fileExtension === 'bin') {
+                        parseBIN(fileContent);
+                    }
+                };
+
+                if (fileExtension === 'csv') {
+                    reader.readAsText(file);
+                } else if (fileExtension === 'json') {
+                    reader.readAsText(file);
+                } else if (fileExtension === 'bin') {
+                    reader.readAsArrayBuffer(file);
+                }
+            }
+        }
+
+        // Parse CSV using PapaParse
+        function parseCSV(fileContent) {
+            Papa.parse(fileContent, {
+                complete: function(results) {
+                    console.log("CSV parsed:", results);
+                    data = results.data;
+                }
+            });
+        }
+
+        // Parse JSON
+        function parseJSON(fileContent) {
+            data = JSON.parse(fileContent);
+            console.log("JSON parsed:", data);
+        }
+
+        // Parse BIN - For simplicity, assume it's a CSV-like structure
+        function parseBIN(fileContent) {
+            let binaryData = new Uint8Array(fileContent);
+            // Example: converting binary data to text (if it's CSV-like data)
+            let text = new TextDecoder().decode(binaryData);
+            parseCSV(text);
+        }
+
+        // Procesar los datos con K-means
+        document.getElementById('process-btn').addEventListener('click', function() {
+            const k = parseInt(document.getElementById('clusters').value);
+            const selectedData = data.map(row => [parseFloat(row[0]), parseFloat(row[1])]); // Suponiendo que las dos primeras columnas son numéricas
+
+            // Llamamos a ml5.js para hacer el clustering K-means
+            const kmeans = ml5.kmeans(selectedData, k, function(model) {
+                console.log("Clustering completo");
+
+                // Graficar el resultado con D3.js
+                plotClusters(model.centroids, model.clusters, selectedData);
+            });
+        });
+
+        // Función para graficar los clusters con D3.js
+        function plotClusters(centroids, clusters, data) {
+            // Limpiar cualquier gráfico previo
+            d3.select("#chart-container").html("");
+
+            const width = 500, height = 500;
+            const svg = d3.select("#chart-container")
+                          .append("svg")
+                          .attr("width", width)
+                          .attr("height", height);
+
+            const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+            // Dibujar los puntos
+            svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => d[0] * 50)  // Escala arbitraria para los datos
+                .attr("cy", d => d[1] * 50)  // Escala arbitraria para los datos
+                .attr("r", 5)
+                .attr("fill", (d, i) => colorScale(clusters[i]));
+
+            // Dibujar los centroides
+            svg.selectAll("rect")
+                .data(centroids)
+                .enter()
+                .append("rect")
+                .attr("x", d => d[0] * 50 - 5)  // Ajuste para centrar
+                .attr("y", d => d[1] * 50 - 5)  // Ajuste para centrar
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", "black");
+        }
+    </script>
+</body>
+</html>
